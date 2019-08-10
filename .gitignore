@@ -8,4 +8,5 @@ env/
 venv/
 
 # Project-specific directories and files
+.idea
 /data
