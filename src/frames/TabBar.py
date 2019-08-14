@@ -19,9 +19,11 @@ class PageTabBar(ttk.Notebook):
 
     def _create_page_tab_widgets(self):
         for p_index, curr_tab in enumerate(self.parent.tab_info):
+
             # creates 2 pages in the Notebook tabs
             self.pages.append(ttk.Frame(self))
-            self.add(self.pages[p_index], text=curr_tab['name'])
+            if not curr_tab['hidden']:
+                self.add(self.pages[p_index], text=curr_tab['name'])
 
         self._bind_tabs()
 
