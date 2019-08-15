@@ -112,24 +112,31 @@ class GUI(Frame):
             }
         ]
 
-    def change_page(self, tab_index=0):
-        print('Changing to Tab #', tab_index)
+    def adjust_focus(self):
+        self.frames['display_window'].adjust_focus()
+
+    def change_page(self, page_tab_index=0):
         if self.current_page_number is not None:
-            if self.current_page_number is tab_index:
+            if self.current_page_number is page_tab_index:
                 # user clicked the same tab
                 return
 
+        print('Changing to Page #', page_tab_index)
+
         if self.tab_info[self.current_page_number]['hidden']:
             if self.current_page_number is 2 and file_helper.list_of_users():
-                self.reset_tab_bar(tab_index)
+                self.reset_tab_bar(page_tab_index)
                 self.reset_user_selection()
 
-        self.current_page_number = tab_index
+        self.current_page_number = page_tab_index
 
         self.frames['display_window'].change_tab()
-        if self.tab_info[tab_index]['hidden']:
+        if self.tab_info[page_tab_index]['hidden']:
             # If the tab is hidden, display it
             self.frames['tab_bar'].show_hidden_tab()
+
+        if self.frames['tab_bar'].current_tab_index() is not page_tab_index:
+            self.frames['tab_bar'].manually_select(page_tab_index)
 
     def color(self, area, state=None, layer=None):
         color = '#'
