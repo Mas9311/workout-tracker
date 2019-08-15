@@ -40,6 +40,7 @@ class UserSelection(ttk.Combobox):
         else:
             self.last_user_index = self.current()
             print('Changed to', self.get().upper())
+            self.parent.change_page()
 
         self.adjust_width()
         self.select_clear()  # clears the highlighted text
