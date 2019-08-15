@@ -47,34 +47,34 @@ class TabBar(ttk.Notebook):
 
     def _create_page_tab_widgets(self):
         for p_index, curr_tab in enumerate(self.parent.tab_info):
-
-            # creates 2 pages in the Notebook tabs
+            # creates 3 tabs
             self.tabs.append(ttk.Frame(self))
             if not curr_tab['hidden']:
+                # display 2 tabs
                 self.add(self.tabs[p_index], text=curr_tab['name'])
 
         self._bind_tab_bar_widget()
 
+    def current_tab_index(self):
+        return self.index(self.select())
+
     def tab_clicked(self, event):
         if self.parent.current_page_number is 2 and not file_helper.list_of_users():
             print('Must create one user to continue')
-            self.select(self.tabs[len(self.tabs) - 1])
-            self.parent.frames['display_window'].adjust_focus()
+            self.manually_select(2)
+            self.parent.adjust_focus()
             return
 
-        page_tab_index = event.widget.index('current')
+        tab_index = event.widget.index('current')
 
-        # for attr in dir(self.pages[page_tab_index]):
-        #     print(attr, '=>', getattr(self.pages[page_tab_index], attr))
+        print('\nTab', tab_index, 'clicked')
+        print('Tab index:', self.select())
+        self.parent.change_page(tab_index)
 
-        print('\nTab', page_tab_index, 'clicked')
-        self.parent.change_page(page_tab_index)
-
-        # for page in self.pages:
-        #     print('Tab', page.winfo_rootx(), page.winfo_rooty())
-
-    def reset_tabs(self):
-        self.select(self.tabs[0])
+    def manually_select(self, tab_index):
+        if self.current_tab_index() is not tab_index:
+            print('Manually selecting tab #', tab_index)
+            self.select(tab_index)
 
     def show_hidden_tab(self):
         tab_index = self.parent.current_page_number
@@ -82,7 +82,7 @@ class TabBar(ttk.Notebook):
         if curr_tab['hidden']:
             print('Displaying the hidden tab')
             self.add(self.tabs[tab_index], text=curr_tab['name'])
-            self.select(self.tabs[tab_index])  # manually selects the new hidden tab
+            self.manually_select(tab_index)
 
             # for attr in dir(event):
             #     print(attr, '=>', getattr(event, attr))
