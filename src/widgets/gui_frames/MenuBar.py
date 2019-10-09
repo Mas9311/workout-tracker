@@ -1,4 +1,4 @@
-from tkinter import *
+from src import *
 
 
 class MenuBar(Menu):

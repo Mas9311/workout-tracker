@@ -1,8 +1,4 @@
-from tkinter import *
-from tkinter import ttk
-
-from src.frames.NewUserFrame import NewUserFrame
-from src.frames.TodayFrame import TodayFrame
+from src import *
 
 
 class DisplayWindow(ttk.Labelframe):
@@ -10,16 +6,15 @@ class DisplayWindow(ttk.Labelframe):
         self.parent = parent
         self.__initialize_display_window_style()
         ttk.Labelframe.__init__(self, self.parent, text=' Initial Label of the Display Window ')
-        self.grid(row=1, column=0, columnspan=2, sticky=N+E+S+W)
+        self.grid(row=1, column=0, columnspan=2, sticky='nesw')
 
         self.display_area_label = None
         self.frame = None
-        self.current_page = None
 
         self._create_window_widgets()
 
     def __initialize_display_window_style(self):
-        # creates the Padding ttk.Frame style
+        # creates a custom ttk.Frame "Padding Frame template" style
         self.parent.style.configure('Display_Bg.TFrame',
                                     background=self.parent.color('Display_Bg'))
 
@@ -35,29 +30,24 @@ class DisplayWindow(ttk.Labelframe):
         self.display_area_label = Label(self, height=30, width=60)
         self.display_area_label.grid(column=0, row=0)
 
-    def adjust_focus(self):
-        self.current_page.adjust_focus()
-
-    def change_tab(self):
-        self.change_display_label()
+    def change_page_displayed(self):
         self.clear_display()
 
         self.frame = ttk.Frame(self, style='Display_Bg.TFrame')
         self.frame.grid(row=0, column=0, sticky='NESW')
 
-        # add a 'spacer' frame at the top
-        spacer = ttk.Frame(self.frame, height=30, style='Display_Bg.TFrame')
-        spacer.grid(row=0, column=0)
+        # creates a padding frame for row=0 with a height of 30 pixels
+        ttk.Frame(self.frame, height=30, style='Display_Bg.TFrame').grid(row=0, column=0)
 
-        if self.parent.current_page_number is 0:
-            self.display_today_page()
-        elif self.parent.current_page_number is 1:
-            self.display_progress_page()
-        elif self.parent.current_page_number is 2:
-            self.display_new_user_page()
+        if self.parent.curr_display['page']:
+            # The current 'page' is initialized:
+            # change the top-left label description
+            self.change_display_label()
+            # invoke the currently displayed 'page' Frame class.
+            self.parent.curr_display['page'](self)
 
     def change_display_label(self):
-        label_description = self.parent.tab_info[self.parent.current_page_number]['label']
+        label_description = self.parent.display_info[self.parent.curr_display['page']]['label']
         self.configure(text=f' {label_description} ')
 
     def clear_display(self):
@@ -67,16 +57,6 @@ class DisplayWindow(ttk.Labelframe):
                     widget.forget()
                     widget.destroy()
 
-    def display_today_page(self):
-        self.current_page = TodayFrame(self)
-
-    def display_progress_page(self):
-        print('Displaying Progress page')
-
-    def display_new_user_page(self):
-        self.current_page = NewUserFrame(self)
-
     def reset_display(self):
         self.clear_display()
-        self.change_tab()
-
+        self.change_page_displayed()

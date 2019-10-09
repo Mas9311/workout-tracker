@@ -1,6 +1,5 @@
-from tkinter import *
-from tkinter import ttk
-from src import file_helper
+from src import *
+from src import file_helper, formatter
 
 
 class NewUserFrame(Frame):
@@ -13,7 +12,7 @@ class NewUserFrame(Frame):
         self.username = StringVar()
 
         self.__create_new_user_widgets()
-        self.adjust_focus()
+        self.force_focus()
 
     def __create_new_user_widgets(self):
         self.left_pad = ttk.Frame(self, width=60, style='Display_Bg.TFrame')
@@ -36,17 +35,13 @@ class NewUserFrame(Frame):
         self.create_button = Button(self, text='Create', command=self.create_button_clicked)
         self.create_button.grid(row=1, column=4)
 
-    def adjust_focus(self):
-        self.name_entry.focus()
-        self.name_entry.icursor(END)
-
     def create_button_clicked(self):
         user_input = self.username.get().lower().strip()
         if not user_input:
-            print('\nNot a valid username')
+            print('\nPlease enter a username.')
             return
 
-        user_name = file_helper.convert_username_to_store(user_input)
+        user_name = formatter.convert_to_underscore(user_input)
 
         if file_helper.user_exists(user_name):
             print(user_name, 'folder already exists. Username must be unique')
@@ -57,3 +52,7 @@ class NewUserFrame(Frame):
         print(f'User folder stored as ./data/users/{user_name}')
 
         self.gui.new_user_created(user_name)
+
+    def force_focus(self):
+        self.name_entry.focus_force()
+        self.name_entry.icursor(END)
